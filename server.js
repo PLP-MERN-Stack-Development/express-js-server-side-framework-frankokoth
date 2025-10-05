@@ -4,13 +4,22 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid');
+const logger = require('./middleware/logger');
+const auth = require('./middleware/auth');
+const productRoutes = require('./routes/productRoutes');
+const dotenv = require('dotenv');
+
+
 
 // Initialize Express app
+dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware setup
 app.use(bodyParser.json());
+app.use(logger);
+app.use(auth);
 
 // Sample in-memory products database
 let products = [
@@ -51,6 +60,8 @@ app.get('/', (req, res) => {
 // POST /api/products - Create a new product
 // PUT /api/products/:id - Update a product
 // DELETE /api/products/:id - Delete a product
+
+app.use('/api/products', productRoutes);
 
 // Example route implementation for GET /api/products
 app.get('/api/products', (req, res) => {
